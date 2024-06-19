@@ -383,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_ciudad'])) {
 <?php endif; ?>
 
     <?php endif; ?>
-    <a href="buscador.php" class="boton-volver">Volver al home</a>
+    <a href="../home.php" class="boton-volver">Volver al home</a>
 </div>
 </body>
 </html>
