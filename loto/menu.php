@@ -160,16 +160,14 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
             }
-            return numbers.slice(0, count).join(", ");
+            numbers = numbers.slice(0, count).sort((a, b) => a - b);
+            return numbers.join(", ");
         }
 
         function showPage(page) {
-            
             document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-           
             document.getElementById(page).style.display = 'block';
 
-            
             let title = '';
             switch (page) {
                 case 'españa':

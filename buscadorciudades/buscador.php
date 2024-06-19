@@ -130,6 +130,7 @@ if ($vista == 'ciudades') {
     $selectedContinent = isset($_GET['continente']) ? $_GET['continente'] : $continentes[0]['Continent'];
     $paisesContinente = obtenerPaisesPorContinente($pdo, $selectedContinent);
 } elseif ($vista == 'lenguas') {
+    $paisSeleccionado = obtenerNombrePais($pdo, $countryCode);
     $lenguas = obtenerLenguas($pdo, $countryCode);
 }
 
@@ -202,190 +203,187 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['editar_ciudad'])) {
             border: 1px solid #ddd;
         }
         th, td {
-            padding: 10px;
+            padding: 8px;
             text-align: left;
         }
         th {
             background-color: #f2f2f2;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        select {
-            padding: 5px;
-            font-size: 16px;
-        }
-        label {
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="number"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin: 5px 0 10px 0;
-            border: 1px solid #ddd;
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             box-sizing: border-box;
         }
-        button {
-            padding: 10px 15px;
+        input[type="submit"] {
+            width: 100%;
             background-color: #007BFF;
-            color: #fff;
+            color: white;
+            padding: 10px;
+            margin: 8px 0;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
-        button:hover {
+        input[type="submit"]:hover {
             background-color: #0056b3;
         }
-        nav {
-            background-color: #007BFF;
-            padding: 10px 20px;
-            text-align: center;
-        }
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin: 0 15px;
+        .error {
+            color: red;
             font-weight: bold;
-            font-size: 18px;
         }
-        nav a:hover {
-            text-decoration: underline;
+        .boton-volver {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
-        .acciones form {
-            display: inline;
+        .boton-volver:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <nav>
-        <a href="?vista=ciudades">Ciudades</a>
-        <a href="?vista=continentes">Continentes</a>
-        <a href="?vista=lenguas">Lenguas</a>
-    </nav>
-    <div class="container">
-        <?php if ($vista == 'ciudades'): ?>
-            <h1>Ciudades de <?php echo htmlspecialchars($paisSeleccionado); ?></h1>
-            <form method="GET" action="">
-                <input type="hidden" name="vista" value="ciudades">
-                <label for="country">Seleccionar país:</label>
-                <select id="country" name="country" onchange="this.form.submit()">
-                    <?php foreach ($paises as $pais): ?>
-                        <option value="<?php echo htmlspecialchars($pais['Code']); ?>" <?php if ($countryCode == $pais['Code']) echo 'selected'; ?>>
-                            <?php echo htmlspecialchars($pais['Name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
+<div class="container">
+    <h1>Buscador de Datos</h1>
+    <form action="buscador.php" method="get">
+        <label for="vista">Vista:</label>
+        <select name="vista" id="vista">
+            <option value="ciudades" <?php echo $vista == 'ciudades' ? 'selected' : ''; ?>>Ciudades</option>
+            <option value="continentes" <?php echo $vista == 'continentes' ? 'selected' : ''; ?>>Continentes</option>
+            <option value="lenguas" <?php echo $vista == 'lenguas' ? 'selected' : ''; ?>>Lenguas</option>
+        </select>
+        <input type="submit" value="Cambiar Vista">
+    </form>
+    <?php if ($vista == 'ciudades'): ?>
+        <h2>Ciudades de <?php echo htmlspecialchars($paisSeleccionado); ?></h2>
+        <form action="buscador.php" method="get">
+            <input type="hidden" name="vista" value="ciudades">
+            <label for="country">País:</label>
+            <select name="country" id="country">
+                <?php foreach ($paises as $pais): ?>
+                    <option value="<?php echo $pais['Code']; ?>" <?php echo $pais['Code'] == $countryCode ? 'selected' : ''; ?>><?php echo htmlspecialchars($pais['Name']); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="submit" value="Mostrar Ciudades">
+        </form>
+        <?php if (isset($ciudades)): ?>
             <table>
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Distrito</th>
-                        <th>Población</th>
-                        <th>Acciones</th>
-                    </tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Distrito</th>
+                    <th>Población</th>
+                    <th>Acciones</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($ciudades as $ciudad): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($ciudad['ID']); ?></td>
-                            <td><?php echo htmlspecialchars($ciudad['Name']); ?></td>
-                            <td><?php echo htmlspecialchars($ciudad['District']); ?></td>
-                            <td><?php echo htmlspecialchars($ciudad['Population']); ?></td>
-                            <td class="acciones">
-                                <form method="POST" style="display:inline-block;">
-                                    <input type="hidden" name="city_id" value="<?php echo htmlspecialchars($ciudad['ID']); ?>">
-                                    <button type="submit" name="borrar_ciudad">Eliminar</button>
-                                </form>
-                                <button onclick="document.getElementById('editar_<?php echo htmlspecialchars($ciudad['ID']); ?>').style.display='block'">Editar</button>
-                                <div id="editar_<?php echo htmlspecialchars($ciudad['ID']); ?>" style="display:none;">
-                                    <form method="POST">
-                                        <input type="hidden" name="city_id" value="<?php echo htmlspecialchars($ciudad['ID']); ?>">
-                                        <label for="nombre">Nombre:</label><br>
-                                        <input type="text" id="nombre" name="nombre" value="<?php echo htmlspecialchars($ciudad['Name']); ?>" required><br>
-                                        <label for="distrito">Distrito:</label><br>
-                                        <input type="text" id="distrito" name="distrito" value="<?php echo htmlspecialchars($ciudad['District']); ?>" required><br>
-                                        <label for="poblacion">Población:</label><br>
-                                        <input type="number" id="poblacion" name="poblacion" value="<?php echo htmlspecialchars($ciudad['Population']); ?>" required><br>
-                                        <button type="submit" name="editar_ciudad">Guardar</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                <?php foreach ($ciudades as $ciudad): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($ciudad['ID']); ?></td>
+                        <td><?php echo htmlspecialchars($ciudad['Name']); ?></td>
+                        <td><?php echo htmlspecialchars($ciudad['District']); ?></td>
+                        <td><?php echo htmlspecialchars($ciudad['Population']); ?></td>
+                        <td>
+                            <form action="buscador.php" method="post" style="display:inline;">
+                                <input type="hidden" name="city_id" value="<?php echo $ciudad['ID']; ?>">
+                                <input type="hidden" name="countryCode" value="<?php echo $countryCode; ?>">
+                                <input type="submit" name="borrar_ciudad" value="Borrar">
+                            </form>
+                            <form action="editar_ciudad.php" method="get" style="display:inline;">
+                                <input type="hidden" name="city_id" value="<?php echo $ciudad['ID']; ?>">
+                                <input type="hidden" name="countryCode" value="<?php echo $countryCode; ?>">
+                                <input type="submit" value="Editar">
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
                 </tbody>
             </table>
-            <h2>Agregar Ciudad</h2>
-            <form method="POST">
-                <label for="nombre">Nombre:</label><br>
-                <input type="text" id="nombre" name="nombre" required><br>
-                <input type="hidden" name="countryCode" value="<?php echo htmlspecialchars($countryCode); ?>">
-                <label for="distrito">Distrito:</label><br>
-                <input type="text" id="distrito" name="distrito" required><br>
-                <label for="poblacion">Población:</label><br>
-                <input type="number" id="poblacion" name="poblacion" required><br>
-                <button type="submit" name="agregar_ciudad">Agregar</button>
+            <h3>Agregar Nueva Ciudad</h3>
+            <form action="buscador.php" method="post">
+                <input type="hidden" name="countryCode" value="<?php echo $countryCode; ?>">
+                <label for="nombre">Nombre:</label>
+                <input type="text" name="nombre" required>
+                <label for="distrito">Distrito:</label>
+                <input type="text" name="distrito" required>
+                <label for="poblacion">Población:</label>
+                <input type="text" name="poblacion" required>
+                <input type="submit" name="agregar_ciudad" value="Agregar Ciudad">
             </form>
-        <?php elseif ($vista == 'continentes'): ?>
-            <h1>Continentes y Países</h1>
-            <form method="GET" action="">
-                <input type="hidden" name="vista" value="continentes">
-                <label for="continente">Seleccionar continente:</label>
-                <select id="continente" name="continente" onchange="this.form.submit()">
-                    <?php foreach ($continentes as $continente): ?>
-                        <option value="<?php echo htmlspecialchars($continente['Continent']); ?>" <?php if ($selectedContinent == $continente['Continent']) echo 'selected'; ?>>
-                            <?php echo htmlspecialchars($continente['Continent']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
+        <?php endif; ?>
+    <?php elseif ($vista == 'continentes'): ?>
+        <h2>Continentes y Países</h2>
+        <form action="buscador.php" method="get">
+            <input type="hidden" name="vista" value="continentes">
+            <label for="continente">Continente:</label>
+            <select name="continente" id="continente">
+                <?php foreach ($continentes as $continente): ?>
+                    <option value="<?php echo htmlspecialchars($continente['Continent']); ?>" <?php echo $continente['Continent'] == $selectedContinent ? 'selected' : ''; ?>><?php echo htmlspecialchars($continente['Continent']); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="submit" value="Mostrar Países">
+        </form>
+        <?php if (isset($paisesContinente)): ?>
             <table>
                 <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                    </tr>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($paisesContinente as $pais): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($pais['Code']); ?></td>
-                            <td><?php echo htmlspecialchars($pais['Name']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php elseif ($vista == 'lenguas'): ?>
-            <h1>Lenguas de <?php echo htmlspecialchars($paisSeleccionado); ?></h1>
-            <form method="GET" action="">
-                <input type="hidden" name="vista" value="lenguas">
-                <label for="country">Seleccionar país:</label>
-                <select id="country" name="country" onchange="this.form.submit()">
-                    <?php foreach ($paises as $pais): ?>
-                        <option value="<?php echo htmlspecialchars($pais['Code']); ?>" <?php if ($countryCode == $pais['Code']) echo 'selected'; ?>>
-                            <?php echo htmlspecialchars($pais['Name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
-            <table>
-                <thead>
+                <?php foreach ($paisesContinente as $pais): ?>
                     <tr>
-                        <th>Lengua</th>
-                        <th>Es Oficial</th>
+                        <td><?php echo htmlspecialchars($pais['Code']); ?></td>
+                        <td><?php echo htmlspecialchars($pais['Name']); ?></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($lenguas as $lengua): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($lengua['Language']); ?></td>
-                            <td><?php echo $lengua['IsOfficial'] === 'T' ? 'Sí' : 'No'; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
-    </div>
+    <?php elseif ($vista == 'lenguas'): ?>
+        <h2>Lenguas de <?php echo htmlspecialchars($paisSeleccionado); ?></h2>
+        <form action="buscador.php" method="get">
+            <input type="hidden" name="vista" value="lenguas">
+            <label for="country">País:</label>
+            <select name="country" id="country">
+                <?php foreach ($paises as $pais): ?>
+                    <option value="<?php echo $pais['Code']; ?>" <?php echo $pais['Code'] == $countryCode ? 'selected' : ''; ?>><?php echo htmlspecialchars($pais['Name']); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="submit" value="Mostrar Lenguas">
+        </form>
+        <?php if (isset($lenguas)): ?>
+    <table>
+        <thead>
+            <tr>
+                <th>Lengua</th>
+                <th>Oficial</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($lenguas as $lengua): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($lengua['Language']); ?></td>
+                    <td><?php echo ($lengua['IsOfficial'] == 'T') ? 'Sí' : 'No'; ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
+
+    <?php endif; ?>
+    <a href="buscador.php" class="boton-volver">Volver al home</a>
+</div>
 </body>
 </html>
