@@ -64,7 +64,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    // Incluir archivo de datos de libros
+             
                     include 'libros.php';
                     
                     foreach ($libros as $libro) {
