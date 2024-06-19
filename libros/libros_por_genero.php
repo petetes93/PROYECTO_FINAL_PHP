@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú de Libros</title>
+    <title>Libros por Género</title>
     <link rel="stylesheet" href="../style.css">
     <style>
         .container {
@@ -44,33 +44,21 @@
         .volver-home:hover {
             background-color: lightskyblue;
         }
-
-        /* Estilo para los enlaces de género */
-        .genero-link {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .genero-link:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Menú de Libros</h1>
+        <h1>Libros por Género</h1>
     </header>
     <main>
         <div class="container">
+            <h2>Libros del género: <?php echo htmlspecialchars($_GET['genero']); ?></h2>
             <table>
                 <thead>
                     <tr>
                         <th>Título</th>
                         <th>Autor</th>
                         <th>Ejemplares</th>
-                        <th>Género</th>
                         <th>Detalles</th>
                     </tr>
                 </thead>
@@ -80,19 +68,19 @@
                     include 'libros.php';
                     
                     foreach ($libros as $libro) {
-                        echo '<tr>';
-                        echo '<td>' . $libro['titulo'] . '</td>';
-                        echo '<td>' . $libro['autor'] . '</td>';
-                        echo '<td>' . $libro['ejemplares'] . '</td>';
-                        // Generar el enlace directamente desde el género
-                        echo '<td><a href="libros_por_genero.php?genero=' . urlencode($libro['genero']) . '" class="genero-link">' . $libro['genero'] . '</a></td>';
-                        echo '<td><a href="libro.php?id=' . $libro['id'] . '">Ver detalles</a></td>';
-                        echo '</tr>';
+                        if ($libro['genero'] === $_GET['genero']) {
+                            echo '<tr>';
+                            echo '<td>' . $libro['titulo'] . '</td>';
+                            echo '<td>' . $libro['autor'] . '</td>';
+                            echo '<td>' . $libro['ejemplares'] . '</td>';
+                            echo '<td><a href="libro.php?id=' . $libro['id'] . '">Ver detalles</a></td>';
+                            echo '</tr>';
+                        }
                     }
                     ?>
                 </tbody>
             </table>
-            <a href="../home.php" class="volver-home">Volver al Home</a>
+            <a href="menu.php" class="volver-home">Volver al Menú Principal</a>
         </div>
     </main>
 </body>

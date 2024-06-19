@@ -41,21 +41,21 @@ $libros = [
         'titulo' => 'La Odisea',
         'autor' => 'Homero',
         'ejemplares' => 30,
-        'genero' => 'Epopeya clásica'
+        'genero' => 'Novela histórica'
     ],
     [
         'id' => 7,
         'titulo' => 'Frankenstein',
         'autor' => 'Mary Shelley',
         'ejemplares' => 14,
-        'genero' => 'Literatura gótica'
+        'genero' => 'Novela histórica'
     ],
     [
         'id' => 8,
         'titulo' => 'Anna Karenina',
         'autor' => 'León Tolstói',
         'ejemplares' => 19,
-        'genero' => 'Novela realista'
+        'genero' => 'Novela histórica'
     ],
     [
         'id' => 9,
@@ -72,4 +72,5 @@ $libros = [
         'genero' => 'Novela histórica'
     ]
 ];
+
 ?>

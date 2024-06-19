@@ -48,9 +48,8 @@
     <main>
         <div class="container">
             <?php
-           
+            // Incluir archivo de datos de libros
             include 'libros.php';
-            
             
             if (isset($_GET['id'])) {
                 $id = $_GET['id'];
