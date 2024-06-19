@@ -24,6 +24,7 @@
             padding: 10px;
             border: 1px solid #ddd;
             text-align: left;
+            cursor: pointer; /* Hacer que las columnas sean clickeables */
         }
 
         .container table th {
@@ -45,7 +46,7 @@
             background-color: lightskyblue;
         }
 
-       
+        /* Estilo para los enlaces de género */
         .genero-link {
             text-decoration: none;
             color: #007bff;
@@ -64,19 +65,19 @@
     </header>
     <main>
         <div class="container">
-            <table>
+            <table id="tabla-libros">
                 <thead>
                     <tr>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>Ejemplares</th>
+                        <th onclick="sortTable(0)">Título</th>
+                        <th onclick="sortTable(1)">Autor</th>
+                        <th onclick="sortTable(2)">Ejemplares</th>
                         <th>Género</th>
                         <th>Detalles</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    
+                    // Incluir archivo de datos de libros
                     include 'libros.php';
                     
                     foreach ($libros as $libro) {
@@ -84,7 +85,7 @@
                         echo '<td>' . $libro['titulo'] . '</td>';
                         echo '<td>' . $libro['autor'] . '</td>';
                         echo '<td>' . $libro['ejemplares'] . '</td>';
-                        
+                        // Generar el enlace directamente desde el género
                         echo '<td><a href="libros_por_genero.php?genero=' . urlencode($libro['genero']) . '" class="genero-link">' . $libro['genero'] . '</a></td>';
                         echo '<td><a href="libro.php?id=' . $libro['id'] . '">Ver detalles</a></td>';
                         echo '</tr>';
@@ -94,6 +95,32 @@
             </table>
             <a href="../home.php" class="volver-home">Volver al Home</a>
         </div>
+
+        <script>
+            function sortTable(columnIndex) {
+                const table = document.getElementById("tabla-libros");
+                const rows = Array.from(table.rows).slice(1); // Ignorar la fila de encabezados
+                
+                rows.sort((rowA, rowB) => {
+                    const cellA = rowA.cells[columnIndex].textContent.trim();
+                    const cellB = rowB.cells[columnIndex].textContent.trim();
+                    
+                    if (isNaN(cellA) || isNaN(cellB)) {
+                        return cellA.localeCompare(cellB);
+                    } else {
+                        return parseFloat(cellA) - parseFloat(cellB);
+                    }
+                });
+                
+               
+                while (table.rows.length > 1) {
+                    table.deleteRow(1);
+                }
+                
+               
+                rows.forEach(row => table.appendChild(row));
+            }
+        </script>
     </main>
 </body>
 </html>
