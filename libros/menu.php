@@ -24,7 +24,7 @@
             padding: 10px;
             border: 1px solid #ddd;
             text-align: left;
-            cursor: pointer; /* Hacer que las columnas sean clickeables */
+            cursor: pointer; 
         }
 
         .container table th {
@@ -46,7 +46,7 @@
             background-color: lightskyblue;
         }
 
-        /* Estilo para los enlaces de género */
+        
         .genero-link {
             text-decoration: none;
             color: #007bff;
@@ -77,7 +77,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    // Incluir archivo de datos de libros
+                    
                     include 'libros.php';
                     
                     foreach ($libros as $libro) {
@@ -85,7 +85,7 @@
                         echo '<td>' . $libro['titulo'] . '</td>';
                         echo '<td>' . $libro['autor'] . '</td>';
                         echo '<td>' . $libro['ejemplares'] . '</td>';
-                        // Generar el enlace directamente desde el género
+                        
                         echo '<td><a href="libros_por_genero.php?genero=' . urlencode($libro['genero']) . '" class="genero-link">' . $libro['genero'] . '</a></td>';
                         echo '<td><a href="libro.php?id=' . $libro['id'] . '">Ver detalles</a></td>';
                         echo '</tr>';
@@ -99,7 +99,7 @@
         <script>
             function sortTable(columnIndex) {
                 const table = document.getElementById("tabla-libros");
-                const rows = Array.from(table.rows).slice(1); // Ignorar la fila de encabezados
+                const rows = Array.from(table.rows).slice(1); 
                 
                 rows.sort((rowA, rowB) => {
                     const cellA = rowA.cells[columnIndex].textContent.trim();
